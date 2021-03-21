@@ -16,16 +16,36 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Icon from "./icon";
 import useStyles from "./styles";
 import Input from "./Input";
+import { signin, signup } from "../../actions/auth";
+
+const intialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  comfirmPassword: "",
+};
 
 const Auth = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const classes = useStyles();
   const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState(intialState);
   const state = null;
   const [isSignup, setIsSignup] = useState(false);
-  const handleSubmit = () => {};
-  const handleChange = () => {};
-  const history = useHistory();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isSignup) {
+      dispatch(signup(formdata(formData, history)));
+    } else {
+      dispatch(signin(formData, history));
+    }
+  };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const googleSuccess = async (res) => {
     const result = res?.profileObj;
