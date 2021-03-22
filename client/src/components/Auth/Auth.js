@@ -9,42 +9,47 @@ import {
   Container,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
-import { AUTH } from "../../constants/actionTypes";
 import { GoogleLogin } from "react-google-login";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 
 import Icon from "./icon";
+import { signin, signup } from "../../actions/auth";
+import { AUTH } from "../../constants/actionTypes";
 import useStyles from "./styles";
 import Input from "./Input";
-import { signin, signup } from "../../actions/auth";
 
-const intialState = {
+const initialState = {
   firstName: "",
   lastName: "",
   email: "",
   password: "",
-  comfirmPassword: "",
+  confirmPassword: "",
 };
 
-const Auth = () => {
+const SignUp = () => {
+  const [form, setForm] = useState(initialState);
+  const [isSignup, setIsSignup] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
+
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState(intialState);
-  const state = null;
-  const [isSignup, setIsSignup] = useState(false);
+  const handleShowPassword = () => setShowPassword(!showPassword);
+
+  const switchMode = () => {
+    setForm(initialState);
+    setIsSignup((prevIsSignup) => !prevIsSignup);
+    setShowPassword(false);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (isSignup) {
-      dispatch(signup(formdata(formData, history)));
+      dispatch(signup(form, history));
     } else {
-      dispatch(signin(formData, history));
+      dispatch(signin(form, history));
     }
-  };
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const googleSuccess = async (res) => {
@@ -53,6 +58,7 @@ const Auth = () => {
 
     try {
       dispatch({ type: AUTH, data: { result, token } });
+
       history.push("/");
     } catch (error) {
       console.log(error);
@@ -61,11 +67,10 @@ const Auth = () => {
 
   const googleError = () =>
     alert("Google Sign In was unsuccessful. Try again later");
-  const switchMode = () => {
-    setIsSignup((prev) => !prev);
-  };
-  const handleShowPassword = () =>
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
   return (
     <Container component="main" maxWidth="xs">
       <Paper className={classes.paper} elevation={3}>
@@ -159,4 +164,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default SignUp;
